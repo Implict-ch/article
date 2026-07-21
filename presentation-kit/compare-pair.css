@@ -1,0 +1,122 @@
+/* 双列对照卡：标题 + 关键词条 + 底栏一句 */
+
+.pres-compare {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-6);
+  width: 100%;
+  max-width: 1040px;
+  margin: 0 auto;
+}
+
+/* 三列对照（日常 / 暑期 / 秋招等） */
+.pres-compare--3 {
+  grid-template-columns: repeat(3, 1fr);
+  max-width: 1200px;
+  gap: var(--space-5);
+}
+
+.pres-compare--3 .pres-compare__card {
+  min-height: 280px;
+  padding: var(--space-4) var(--space-4) var(--space-3);
+}
+
+.pres-compare--3 .pres-compare__title {
+  font-size: clamp(24px, 1.9vw, 28px);
+}
+
+.pres-compare--3 .pres-compare__key {
+  font-size: 16px;
+  padding: 8px 12px;
+}
+
+.pres-compare--3 .pres-compare__foot {
+  font-size: 15px;
+}
+
+.pres-compare__card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-height: 300px;
+  padding: var(--space-5) var(--space-5) var(--space-4);
+  text-align: left;
+  overflow: hidden;
+}
+
+.pres-compare__card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--rule);
+  transform: scaleX(0);
+  transform-origin: left;
+  animation: pres-kf-bar-grow 0.45s var(--ease-quart) forwards;
+  animation-delay: calc(var(--compare-delay, 0ms) + 80ms);
+}
+
+.pres-compare__card--em {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+
+.pres-compare__card--em::before {
+  background: var(--accent);
+}
+
+.pres-compare__card--muted {
+  background: var(--surface-2);
+}
+
+.pres-compare__title {
+  margin: 0;
+  font-size: clamp(28px, 2.2vw, 34px);
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--text);
+}
+
+.pres-compare__card--em .pres-compare__title {
+  color: var(--accent);
+}
+
+.pres-compare__keys {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  flex: 1;
+}
+
+.pres-compare__key {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--text-2);
+  padding: 10px 16px;
+  background: var(--surface-3);
+  border: var(--rule-w) solid var(--rule);
+  border-radius: var(--r-sm);
+}
+
+.pres-compare__card--em .pres-compare__key {
+  background: var(--surface-2);
+}
+
+.pres-compare__foot {
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.45;
+  color: var(--text-mute);
+  padding-top: var(--space-3);
+  border-top: var(--rule-w) solid var(--rule);
+}
+
+.pres-compare__card--em .pres-compare__foot {
+  border-top-color: rgba(180, 83, 9, 0.28);
+  color: var(--text-2);
+}

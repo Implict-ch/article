@@ -1,0 +1,141 @@
+/* 墙式内容块：通栏网格壳 + 块内排版（行列坐标留在章节 CSS） */
+
+.pres-wall {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto auto auto;
+  gap: var(--space-4) var(--space-7);
+  align-content: center;
+  max-height: 100%;
+  overflow: hidden;
+}
+
+/* 时间轴芯片行 */
+.pres-timeline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+
+/* 流程节点链（校招→入职 等） */
+.pres-flow-chain {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.pres-flow-chain__node {
+  flex-shrink: 0;
+  padding: 10px 18px;
+  background: var(--surface-3);
+  border: var(--rule-w) var(--rule-style) solid var(--rule);
+  border-radius: var(--r-sm);
+}
+
+.pres-flow-chain__node--dim {
+  opacity: 0.55;
+}
+
+.pres-flow-chain__label {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.pres-flow-chain__connector {
+  flex: 1;
+  min-width: 80px;
+  height: 24px;
+}
+
+.pres-flow-chain__path {
+  stroke: var(--rule);
+}
+
+.pres-flow-chain__break {
+  stroke: var(--accent);
+  opacity: 0;
+}
+
+.pres-flow-chain__break--on {
+  animation: pres-kf-flash-in 0.5s ease forwards;
+}
+
+/* 块内排版 */
+
+.pres-block__kicker {
+  margin-bottom: var(--space-2);
+}
+
+.pres-block__title {
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.25;
+  margin: 0 0 var(--space-2);
+  letter-spacing: -0.02em;
+}
+
+.pres-block__title--em {
+  color: var(--accent);
+  font-size: 36px;
+}
+
+.pres-block__sub {
+  font-size: 17px;
+  color: var(--text-mute);
+  margin: 0;
+  line-height: 1.45;
+}
+
+.pres-block__panel {
+  padding: var(--space-5);
+  background: var(--accent-soft);
+  border-radius: var(--r-sm);
+}
+
+.pres-block__panel--soft {
+  background: var(--surface-3);
+}
+
+.pres-inline-flow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin: 0 0 var(--space-3);
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text-2);
+}
+
+.pres-inline-flow__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
+}
+
+.pres-placeholder-grid {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.pres-placeholder-cell {
+  flex: 1;
+  min-height: 72px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: var(--space-3);
+  background: var(--surface-3);
+  border: var(--rule-w) dashed var(--rule);
+}
+
+.pres-placeholder-cell__name {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-mute);
+}

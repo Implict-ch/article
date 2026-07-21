@@ -1,0 +1,65 @@
+/* 纵向条目列表：同页逐步揭示（渠道 / 步骤清单） */
+
+.pres-list-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  width: 100%;
+  max-width: 920px;
+  margin: 0 auto;
+}
+
+.pres-list-stack__item {
+  position: relative;
+  display: grid;
+  grid-template-columns: 72px 1fr;
+  align-items: start;
+  column-gap: var(--space-5);
+  padding: var(--space-5) var(--space-6);
+  background: var(--surface-2);
+  border: var(--rule-w) solid var(--rule);
+  border-radius: var(--r-sm);
+  text-align: left;
+}
+
+.pres-list-stack__item--em {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+
+.pres-list-stack__num {
+  font-family: var(--hero-num-font);
+  font-weight: var(--hero-num-weight);
+  font-style: var(--hero-num-style);
+  letter-spacing: var(--hero-num-track);
+  font-size: clamp(32px, 2.6vw, 40px);
+  line-height: 1;
+  color: var(--accent);
+  padding-top: 2px;
+}
+
+.pres-list-stack__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.pres-list-stack__title {
+  margin: 0;
+  font-size: clamp(26px, 2.1vw, 30px);
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--text);
+}
+
+.pres-list-stack__hint {
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.45;
+  color: var(--text-mute);
+}
+
+.pres-list-stack__item--em .pres-list-stack__hint {
+  color: var(--text-2);
+}

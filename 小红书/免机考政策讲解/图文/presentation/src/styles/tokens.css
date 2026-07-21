@@ -1,0 +1,77 @@
+/* ─────────────────────────────────────────────────────────────────────
+ * Theme · paper-warm-gray
+ *   Extracted from CodeFun2000 landing `paper-white` (纸白暖灰).
+ *   Warm stone paper + crisp white cards + amber accent (#B45309).
+ *   Notion / 飞书文档感 + 宣传页 hero__grid-bg：60px 琥珀网格 +
+ *   gridPulse 呼吸（opacity 0.03 ↔ 0.07）。
+ *
+ *   character knobs:
+ *     • hero numbers   — Chakra Petch / Noto Sans, weight 700, tabular
+ *     • rule           — 1px solid warm gray hairline
+ *     • card           — 8px refined radius, soft stone shadow
+ *     • surface        — accent paper grid on stage (::after)
+ *     • motion         — calm product-demo pace
+ * ───────────────────────────────────────────────────────────────────── */
+:root {
+  /* ─── palette (from Intro-For-Cf themes.js · paper-white) ─── */
+  --shell:        #f3f2ee;   /* bgPanel — letterbox slightly grayer */
+  --surface:      #fafaf8;   /* bg */
+  --surface-2:    #ffffff;   /* bgCard */
+  --surface-3:    #f5f4f0;   /* bgCode */
+  --text:         #1c1917;   /* textPrimary · stone-900 */
+  --text-2:       #44403c;   /* textSoft · stone-700 */
+  --text-mute:    #57534e;   /* textSecondary · stone-600 */
+  --text-faint:   #a8a29e;   /* textMuted · stone-400 */
+  --rule:         #e3e0d8;   /* border */
+  --accent:       #b45309;   /* amber-700 CTA */
+  --accent-soft:  rgba(180, 83, 9, 0.10);
+  --accent-glow:  rgba(180, 83, 9, 0.18);
+
+  /* ─── fonts (landing: Chakra Petch display + Noto Sans SC body) ─── */
+  --font-display-cn: "Noto Sans SC", "Source Han Sans SC", -apple-system, sans-serif;
+  --font-display-en: "Chakra Petch", "Noto Sans SC", -apple-system, sans-serif;
+  --font-body:       "Noto Sans SC", "Inter", -apple-system, sans-serif;
+  --font-mono:       "JetBrains Mono", "SF Mono", ui-monospace, monospace;
+  --font-features:   "ss01", "tnum", "kern";
+
+  /* ─── motion: calm product demo ─── */
+  --dur-base:       520ms;
+  --dur-slow:       850ms;
+  --dur-cinematic:  1280ms;
+
+  /* ─── design identity: flat warm paper panels ─── */
+  --r-card:        var(--r-sm);        /* 8px — Notion-like card */
+  --r-stage:       0;
+  --rule-w:        1px;
+  --rule-style:    solid;
+  --hero-num-font:    var(--font-display-en);
+  --hero-num-style:   normal;
+  --hero-num-weight:  700;
+  --hero-num-track:   -0.02em;
+  --stage-pad-x:   64px;
+  --stage-pad-y:   72px;
+  --card-shadow:
+    0 1px 0 var(--rule),
+    0 8px 24px rgba(28, 25, 23, 0.06);
+  --shadow-stage:
+    0 40px 100px rgba(28, 25, 23, 0.10),
+    0 0 0 1px rgba(28, 25, 23, 0.04);
+
+  /* ─── decoration: hero__grid-bg (cf-landing.css) ─── */
+  --surface-pattern:
+    linear-gradient(var(--accent) 1px, transparent 1px),
+    linear-gradient(90deg, var(--accent) 1px, transparent 1px);
+  --surface-pattern-size: 60px 60px;
+  --surface-pattern-blend: normal;
+  --surface-pattern-opacity: 1;
+}
+
+/* 宣传页 gridPulse —— 叠在 base.css .stage-frame::after 上 */
+@keyframes pw-grid-pulse {
+  0%, 100% { opacity: 0.03; }
+  50%      { opacity: 0.07; }
+}
+
+.stage-frame::after {
+  animation: pw-grid-pulse 4s ease infinite;
+}

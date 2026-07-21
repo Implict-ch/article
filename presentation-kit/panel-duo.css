@@ -1,0 +1,113 @@
+/* 左右双卡对照：顶栏标签+图标 / 条件 / 底栏结论 */
+
+.pres-duo {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-6);
+  width: 100%;
+  max-width: 1040px;
+  margin: 0 auto;
+}
+
+.pres-duo__card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  min-height: 260px;
+  padding: var(--space-5) var(--space-5) var(--space-4);
+  text-align: left;
+  overflow: hidden;
+}
+
+.pres-duo__card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--rule);
+  transform: scaleX(0);
+  transform-origin: left;
+  animation: pres-kf-bar-grow 0.45s var(--ease-quart) forwards;
+  animation-delay: calc(var(--duo-delay, 0ms) + 80ms);
+}
+
+.pres-duo__card--em {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+
+.pres-duo__card--em::before {
+  background: var(--accent);
+}
+
+.pres-duo__card--muted {
+  background: var(--surface-2);
+}
+
+.pres-duo__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: var(--space-4);
+}
+
+.pres-duo__badge {
+  color: var(--text-faint);
+  letter-spacing: 0.12em;
+}
+
+.pres-duo__card--em .pres-duo__badge {
+  color: var(--accent);
+}
+
+.pres-duo__icon {
+  display: flex;
+  flex-shrink: 0;
+  color: var(--text-faint);
+}
+
+.pres-duo__card--em .pres-duo__icon {
+  color: var(--accent);
+}
+
+.pres-duo__icon svg {
+  width: 40px;
+  height: 40px;
+}
+
+.pres-duo__condition {
+  margin: 0;
+  flex: 1;
+  font-size: clamp(22px, 1.8vw, 26px);
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--text-2);
+}
+
+.pres-duo__foot {
+  margin-top: auto;
+  width: 100%;
+  padding-top: var(--space-4);
+  border-top: var(--rule-w) solid var(--rule);
+}
+
+.pres-duo__card--em .pres-duo__foot {
+  border-top-color: rgba(180, 83, 9, 0.28);
+}
+
+.pres-duo__outcome {
+  margin: 0;
+  font-size: clamp(32px, 2.5vw, 40px);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: 0.02em;
+  color: var(--text-mute);
+}
+
+.pres-duo__card--em .pres-duo__outcome {
+  color: var(--accent);
+}

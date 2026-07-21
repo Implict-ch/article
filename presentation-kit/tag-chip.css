@@ -1,0 +1,76 @@
+/* 行内标签 / 芯片组 */
+
+.pres-chips {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.pres-chips--start {
+  justify-content: flex-start;
+}
+
+.pres-chip {
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--text-2);
+  padding: 10px 22px;
+  background: var(--surface-3);
+  border: var(--rule-w) solid var(--rule);
+  border-radius: var(--r-sm);
+}
+
+.pres-chip--sm {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  letter-spacing: 0.08em;
+  padding: 8px 16px;
+}
+
+.pres-chip--muted {
+  color: var(--text-faint);
+  border-style: dashed;
+}
+
+.pres-chip--em {
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-color: transparent;
+}
+
+.pres-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.pres-chip-row--lg {
+  gap: var(--space-4);
+  margin-top: var(--space-4);
+}
+
+/* 路线下方主题标签（带交错 delay） */
+.pres-chip--theme {
+  font-size: 22px;
+  color: var(--text-2);
+  padding: 12px 28px;
+  background: var(--surface-2);
+  border: var(--rule-w) var(--rule-style) solid var(--rule);
+  box-shadow: var(--card-shadow);
+  opacity: 0;
+  transform: translateY(10px);
+  animation: pres-kf-fade-up 0.5s var(--ease-quart) forwards;
+  animation-delay: calc(var(--tags-delay, 0ms) + var(--tag-i, 0ms));
+}
+
+.pres-chip--info {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--accent);
+  padding: 6px 14px;
+  background: var(--accent-soft);
+  border-radius: var(--r-sm);
+  border: none;
+}

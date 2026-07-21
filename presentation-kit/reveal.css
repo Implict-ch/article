@@ -1,0 +1,46 @@
+/* 同页逐步揭示：pending / visible / enter */
+
+.pres-reveal--hidden {
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(16px);
+}
+
+.pres-reveal--shown {
+  visibility: visible;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.pres-reveal--enter {
+  animation: pres-kf-reveal-in 0.55s var(--ease-quart) forwards;
+}
+
+/* 支柱卡专用：隐藏不占位 vs 显示 */
+.pres-slot--hidden {
+  visibility: hidden;
+  opacity: 0;
+}
+
+.pres-slot--shown {
+  visibility: visible;
+  opacity: 1;
+}
+
+.pres-slot--enter {
+  transform: translateY(14px);
+  animation: pres-kf-rise 0.55s var(--ease-quart) forwards;
+}
+
+.pres-slot--enter-bar::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  animation: pres-kf-bar-grow 0.48s var(--ease-quart) 0.1s forwards;
+}

@@ -1,0 +1,35 @@
+# dependencies
+node_modules/
+**/node_modules/
+
+# build
+dist/
+dist-ssr/
+**/dist/
+
+# env / secrets
+.env
+.env.*
+!.env.example
+*.pem
+credentials.json
+
+# logs / caches
+logs/
+*.log
+.npm
+.cache/
+.vite/
+
+# editor / OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*.local

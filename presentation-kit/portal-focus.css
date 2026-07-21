@@ -1,0 +1,29 @@
+/* 居中焦点页：主标识 + URL/关键词 + 标签 + 说明 */
+
+.pres-focus {
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-5);
+  text-align: center;
+}
+
+.pres-focus__primary {
+  margin: 0;
+  font-size: clamp(48px, 4.2vw, 64px);
+  font-weight: var(--hero-num-weight);
+  letter-spacing: var(--hero-num-track);
+  line-height: 1.1;
+}
+
+.pres-focus__secondary {
+  margin: 0;
+  font-size: 24px;
+  color: var(--text-2);
+  letter-spacing: 0.04em;
+}
+
+.pres-focus__note {
+  margin: 0;
+  color: var(--text-mute);
+  letter-spacing: 0.08em;
+}

@@ -1,0 +1,25 @@
+/**
+ * hw-coruse 录屏演示 · 抽象样式库
+ * 依赖各 presentation 内 tokens.css / base.css，不单独引入。
+ * 新章开发时对照 README 选用 class；已有章节保持原前缀不变。
+ */
+
+@import "./motion.css";
+@import "./scene.css";
+@import "./transition.css";
+@import "./section-head.css";
+@import "./cover-hero.css";
+@import "./index-rail.css";
+@import "./pipeline.css";
+@import "./card-grid.css";
+@import "./panel-duo.css";
+@import "./portal-focus.css";
+@import "./tag-chip.css";
+@import "./reveal.css";
+@import "./footnote.css";
+@import "./media-frame.css";
+@import "./icon-draw.css";
+@import "./wall-block.css";
+@import "./list-stack.css";
+@import "./compare-pair.css";
+@import "./alert-banner.css";

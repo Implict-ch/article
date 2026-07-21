@@ -1,0 +1,81 @@
+/* 截图 / 预览容器 + 通栏冲击句 */
+
+.pres-media {
+  width: min(1140px, 94%);
+  aspect-ratio: 16 / 10;
+  padding: 0;
+  overflow: hidden;
+  background: var(--surface-2);
+  border: var(--rule-w) solid var(--rule);
+  margin: var(--space-3) 0;
+}
+
+.pres-media--wide {
+  aspect-ratio: 2597 / 1701;
+}
+
+.pres-media__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+}
+
+.pres-impact {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: var(--space-5) 0 var(--space-3);
+  border-top: var(--rule-w) var(--rule-style) solid var(--rule);
+}
+
+.pres-impact__lead {
+  margin: 0 0 var(--space-3);
+  color: var(--text-mute);
+}
+
+/* 工具演示步：居中 + 截图 + CTA */
+.pres-tool-step {
+  padding: 0;
+}
+
+.pres-tool-step__inner {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  padding: var(--stage-pad-y) var(--stage-pad-x);
+  text-align: center;
+}
+
+.pres-tool-step__title {
+  font-size: clamp(40px, 3.5vw, 56px);
+  margin: 0;
+  line-height: 1.1;
+}
+
+.pres-media--enter {
+  animation: pres-kf-rise 0.7s var(--ease-quart) 0.15s both;
+}
+
+.pres-tool-step__cta {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.pres-tool-step__next {
+  margin: 0;
+  color: var(--text-mute);
+}
+
+.pres-impact__headline {
+  font-size: clamp(48px, 4.2vw, 72px);
+  font-weight: 700;
+  line-height: 1.1;
+  margin: 0;
+  color: var(--accent);
+  letter-spacing: -0.02em;
+}

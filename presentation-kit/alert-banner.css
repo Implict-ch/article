@@ -1,0 +1,46 @@
+/* 底部警示条：左图标 + 右文案（红，弹入） */
+
+.pres-alert {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  width: 100%;
+  max-width: 720px;
+  margin: var(--space-5) auto 0;
+  padding: var(--space-4) var(--space-5);
+  background: rgba(185, 28, 28, 0.09);
+  border: 2px solid #b91c1c;
+  border-radius: var(--r-sm);
+  text-align: left;
+}
+
+.pres-alert--enter {
+  opacity: 0;
+  transform: translateY(16px);
+  animation: pres-kf-reveal-in 0.55s var(--ease-quart) forwards;
+}
+
+.pres-alert__icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  color: #b91c1c;
+}
+
+.pres-alert__icon svg {
+  width: 40px;
+  height: 40px;
+}
+
+.pres-alert__text {
+  margin: 0;
+  flex: 1;
+  font-size: clamp(20px, 1.6vw, 24px);
+  font-weight: 700;
+  line-height: 1.4;
+  color: #991b1b;
+  letter-spacing: 0.02em;
+}

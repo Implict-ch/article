@@ -1,0 +1,56 @@
+/* 内容页页眉：kicker + 多级标题 */
+
+.pres-head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  max-width: 900px;
+}
+
+.pres-head--center {
+  align-items: center;
+  text-align: center;
+  margin: 0 auto;
+}
+
+.pres-kicker {
+  margin: 0;
+  color: var(--text-faint);
+  letter-spacing: 0.12em;
+}
+
+.pres-title--lg {
+  font-size: clamp(88px, 7.5vw, 128px);
+  line-height: 1.05;
+  margin: 0;
+}
+
+.pres-title--md {
+  font-size: clamp(56px, 5vw, 80px);
+  line-height: 1.1;
+  margin: 0;
+}
+
+.pres-title--sm {
+  font-size: clamp(52px, 4.5vw, 72px);
+  line-height: 1.1;
+  margin: 0;
+}
+
+.pres-subtitle {
+  margin: var(--space-2) 0 0;
+  font-size: 26px;
+  color: var(--text-2);
+}
+
+.pres-caption {
+  margin: 0 auto;
+  text-align: center;
+  color: var(--text-mute);
+  letter-spacing: 0.06em;
+}
+
+.pres-title-sep {
+  margin: 0 0.12em;
+  color: var(--text-mute);
+}

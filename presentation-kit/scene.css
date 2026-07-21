@@ -1,0 +1,49 @@
+/* 场景根与布局工具 */
+
+.pres-scene {
+  color: var(--text);
+}
+
+.pres-accent {
+  color: var(--accent);
+}
+
+.pres-layout--center {
+  justify-content: center;
+  gap: var(--space-5);
+}
+
+.pres-layout--center-wide {
+  justify-content: center;
+  gap: var(--space-7);
+}
+
+.pres-layout--stack {
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.pres-animate--rise {
+  opacity: 0;
+  transform: translateY(12px);
+  animation: pres-kf-rise 0.55s var(--ease-quart) forwards;
+}
+
+.pres-animate--rise-sm {
+  opacity: 0;
+  transform: translateY(8px);
+  animation: pres-kf-rise 0.45s var(--ease-quart) forwards;
+}
+
+.pres-animate--rise-lg {
+  opacity: 0;
+  transform: translateY(14px);
+  animation: pres-kf-rise 0.55s var(--ease-quart) forwards;
+}
+
+.pres-animate--slide-in {
+  opacity: 0;
+  transform: translateX(-10px);
+  animation: pres-kf-slide-in 0.55s var(--ease-quart) forwards;
+}

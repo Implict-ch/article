@@ -1,0 +1,172 @@
+/* 卡片栅格：双列入口 / 三列支柱 / 统计块 */
+
+.pres-grid--2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-5);
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.pres-grid--3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-4);
+  width: 100%;
+  max-width: 1160px;
+  margin: 0 auto;
+}
+
+.pres-grid--3-wide {
+  gap: var(--space-5);
+  max-width: 1100px;
+}
+
+/* 双列信息卡（左对齐，可选强调） */
+.pres-card--entry {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-5);
+  text-align: left;
+}
+
+.pres-card--entry-em {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+
+.pres-card__eyebrow {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text-mute);
+  letter-spacing: 0.06em;
+}
+
+.pres-card__eyebrow--accent {
+  color: var(--accent);
+}
+
+.pres-card__lead {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.pres-card__meta {
+  margin: var(--space-2) 0 0;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+/* 三列支柱卡 */
+.pres-card--pillar {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-height: 148px;
+  padding: var(--space-5) var(--space-5) var(--space-4);
+  background: var(--surface-2);
+  border: var(--rule-w) solid var(--rule);
+  border-radius: var(--r-sm);
+  overflow: visible;
+}
+
+.pres-card--pillar-em::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  animation: pres-kf-bar-grow 0.48s var(--ease-quart) 0.1s forwards;
+}
+
+.pres-card__index {
+  color: var(--accent);
+  letter-spacing: 0.1em;
+}
+
+.pres-card__heading {
+  margin: 0;
+  font-size: clamp(22px, 1.75vw, 26px);
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--text);
+  flex: 1;
+}
+
+.pres-card__footnote {
+  margin-top: auto;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.pres-card__split-foot {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin-top: auto;
+  border-top: var(--rule-w) solid var(--rule);
+  margin-inline: calc(-1 * var(--space-5));
+  margin-bottom: calc(-1 * var(--space-4));
+}
+
+.pres-card__split-cell {
+  padding: var(--space-4) var(--space-3);
+  text-align: center;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--text-2);
+}
+
+.pres-card__split-cell--em {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.pres-card__split-cell + .pres-card__split-cell {
+  border-left: var(--rule-w) solid var(--rule);
+  background: var(--surface-3);
+}
+
+/* 三列统计 / 分类块 */
+.pres-card--stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-5) var(--space-4);
+  background: var(--surface-2);
+  border: var(--rule-w) solid var(--rule);
+  border-radius: var(--r-sm);
+}
+
+.pres-card--stat-em {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  box-shadow: var(--card-shadow);
+}
+
+.pres-card__stat-key {
+  font-size: clamp(36px, 3vw, 44px);
+  font-weight: var(--hero-num-weight);
+  letter-spacing: var(--hero-num-track);
+  color: var(--accent);
+  line-height: 1;
+}
+
+.pres-card__stat-val {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text-2);
+}
