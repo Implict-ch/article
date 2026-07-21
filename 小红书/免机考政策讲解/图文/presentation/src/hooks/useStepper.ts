@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 
-const STORAGE_KEY = "xhs-exemption-34-v1";
+const STORAGE_KEY = "xhs-exemption-34-v2";
 
 export function useStepper(totalSteps: number) {
   const [step, setStep] = useState(() => {

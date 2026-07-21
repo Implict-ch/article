@@ -1,3 +1,161 @@
+.ex34-accent {
+  color: var(--accent);
+}
+
+/* ─── Cover（对齐目标院校封面：mag-bar + hero + foot）─── */
+.ex34-cover {
+  padding: 96px 80px;
+  justify-content: flex-start;
+}
+
+.ex34-cover__mag {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 88px;
+  flex-shrink: 0;
+  opacity: 0;
+  transform: translateY(12px);
+  animation: ex34-rise 0.5s var(--ease-quart) forwards;
+}
+
+.ex34-cover__mag-line {
+  flex: 1;
+  height: 4px;
+  background: var(--accent);
+}
+
+.ex34-cover__mag-tag {
+  font-size: 34px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+.ex34-cover__hero {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  min-height: 0;
+  padding-top: 240px;
+  opacity: 0;
+  transform: translateY(16px);
+  animation: ex34-rise 0.55s var(--ease-quart) 0.08s forwards;
+}
+
+.ex34-cover__title {
+  margin: 0;
+  font-size: 88px;
+  line-height: 1.22;
+  letter-spacing: -0.02em;
+  font-weight: 900;
+  color: var(--text);
+  font-family: var(--font-display-cn);
+}
+
+.ex34-cover__line {
+  display: block;
+  white-space: nowrap;
+}
+
+.ex34-cover__points {
+  list-style: none;
+  margin: 120px 0 auto;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+  width: 100%;
+}
+
+.ex34-cover__point {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 360px;
+}
+
+.ex34-cover__point-num {
+  font-family: var(--font-display-en);
+  font-size: 36px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+  min-width: 1.8em;
+}
+
+.ex34-cover__point-rule {
+  width: 24px;
+  height: 3px;
+  background: var(--accent);
+  opacity: 0.55;
+  flex-shrink: 0;
+}
+
+.ex34-cover__point-text {
+  font-size: 48px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: var(--text);
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.ex34-cover__foot {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 32px;
+  margin-top: auto;
+  flex-shrink: 0;
+  opacity: 0;
+  transform: translateY(12px);
+  animation: ex34-rise 0.5s var(--ease-quart) 0.16s forwards;
+}
+
+.ex34-cover__foot-rule {
+  flex: 1;
+  height: 4px;
+  background: var(--accent);
+  margin-bottom: 12px;
+}
+
+.ex34-cover__foot-label {
+  font-family: var(--font-display-en);
+  font-size: 88px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--rule);
+  user-select: none;
+}
+
+.ex34-cover__foot-copy {
+  text-align: right;
+  padding-bottom: 8px;
+}
+
+.ex34-cover__foot-step {
+  display: block;
+  font-family: var(--font-display-en);
+  font-size: 40px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--accent);
+}
+
+.ex34-cover__foot-name {
+  display: block;
+  margin-top: 8px;
+  font-size: 36px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--text-2);
+}
+
 .ex34-page {
   gap: 28px;
   overflow: hidden;

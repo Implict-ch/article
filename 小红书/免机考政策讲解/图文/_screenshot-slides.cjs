@@ -15,10 +15,11 @@ const { chromium } = require("playwright");
 const baseDir = __dirname;
 const outDir = path.join(baseDir, "截图");
 const baseUrl = process.env.PPT_URL || "http://localhost:5182/";
-const pageCount = 4;
+const pageCount = 5;
 const itemSize = 29;
 
 const PAGE_NAMES = [
+  "00-封面",
   "01-软件算法-信息数理化",
   "02-数学-网络安全",
   "03-人工智能-超算计算",
@@ -37,7 +38,7 @@ const PAGE_NAMES = [
   await context.addInitScript(
     ({ size }) => {
       localStorage.setItem("xhs-exemption-item-size", String(size));
-      localStorage.setItem("xhs-exemption-34-v1", "0");
+      localStorage.setItem("xhs-exemption-34-v2", "0");
     },
     { size: itemSize }
   );

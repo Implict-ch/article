@@ -11,8 +11,9 @@ import { Stage } from "./components/Stage";
 import { PAGES, categoriesForPage } from "./data/categories";
 import { useStepper } from "./hooks/useStepper";
 import { CategoryPage } from "./pages/CategoryPage";
+import { CoverPage } from "./pages/CoverPage";
 
-const TOTAL = PAGES.length;
+const TOTAL = PAGES.length + 1; // 封面 + 内容页
 const SIZE_KEY = "xhs-exemption-item-size";
 const DEFAULT_ITEM_SIZE = 29;
 
@@ -46,13 +47,19 @@ export default function App() {
         style={{ ["--ex34-item-size" as string]: `${itemSize}px` }}
       >
         <div key={step} className="scene">
-          <CategoryPage categories={categoriesForPage(step)} />
+          {step === 0 ? (
+            <CoverPage />
+          ) : (
+            <CategoryPage categories={categoriesForPage(step - 1)} />
+          )}
         </div>
       </Stage>
-      <SettingsPanel
-        schoolSize={itemSize}
-        onSchoolSizeChange={setItemSize}
-      />
+      {step > 0 ? (
+        <SettingsPanel
+          schoolSize={itemSize}
+          onSchoolSizeChange={setItemSize}
+        />
+      ) : null}
       <PageDots total={totalSteps} current={step} onJump={jump} />
     </>
   );

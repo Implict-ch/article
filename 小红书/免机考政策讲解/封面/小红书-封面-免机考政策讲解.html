@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>华为秋招如何免机考？· 小红书封面</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Noto+Sans+SC:wght@500;700;900&display=swap"
+    rel="stylesheet"
+  />
+  <style>
+    :root {
+      --shell: #f3f2ee;
+      --surface: #fafaf8;
+      --text: #1c1917;
+      --text-2: #44403c;
+      --rule: #e3e0d8;
+      --accent: #b45309;
+      --font-cn: "Noto Sans SC", "Source Han Sans SC", sans-serif;
+      --font-en: "Chakra Petch", "Noto Sans SC", sans-serif;
+      --cover-w: 1080px;
+      --cover-h: 1440px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      background: var(--shell);
+      font-family: var(--font-cn);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .preview-shell {
+      min-height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .cover-scaler {
+      width: min(calc(100vw - 48px), calc((100vh - 48px) * 3 / 4));
+      aspect-ratio: 3 / 4;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cover {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: var(--cover-w);
+      height: var(--cover-h);
+      transform-origin: top left;
+      background: var(--surface);
+      overflow: hidden;
+      box-shadow:
+        0 40px 100px rgba(28, 25, 23, 0.10),
+        0 0 0 1px rgba(28, 25, 23, 0.04);
+    }
+
+    .cover::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(var(--accent) 1px, transparent 1px),
+        linear-gradient(90deg, var(--accent) 1px, transparent 1px);
+      background-size: 60px 60px;
+      opacity: 0.07;
+    }
+
+    .cover-inner {
+      position: relative;
+      z-index: 1;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      padding: 96px 80px 96px;
+    }
+
+    .mag-bar {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      margin-bottom: 88px;
+    }
+
+    .mag-bar__line {
+      flex: 1;
+      height: 4px;
+      background: var(--accent);
+    }
+
+    .mag-bar__tag {
+      font-size: 34px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: var(--accent);
+      white-space: nowrap;
+    }
+
+    .hero {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      padding-top: 240px;
+      min-height: 0;
+    }
+
+    .hero-title {
+      font-size: 88px;
+      line-height: 1.22;
+      letter-spacing: -0.02em;
+      font-weight: 900;
+      color: var(--text);
+    }
+
+    .hero-title .line {
+      display: block;
+      white-space: nowrap;
+    }
+
+    .hero-title .emph {
+      color: var(--accent);
+    }
+
+    .points {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 28px;
+      width: 100%;
+      margin-top: 120px;
+      margin-bottom: auto;
+      padding: 0;
+    }
+
+    .points__item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 360px;
+    }
+
+    .points__num {
+      font-family: var(--font-en);
+      font-size: 36px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: var(--accent);
+      min-width: 1.8em;
+    }
+
+    .points__text {
+      font-size: 48px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      color: var(--text);
+      line-height: 1.2;
+      white-space: nowrap;
+    }
+
+    .points__rule {
+      width: 24px;
+      height: 3px;
+      background: var(--accent);
+      opacity: 0.55;
+      flex-shrink: 0;
+    }
+
+    .chapter-foot {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 32px;
+      margin-top: auto;
+    }
+
+    .chapter-foot__rule {
+      flex: 1;
+      height: 4px;
+      background: var(--accent);
+      margin-bottom: 12px;
+    }
+
+    .chapter-foot__label {
+      font-family: var(--font-en);
+      font-size: 88px;
+      font-weight: 700;
+      line-height: 1;
+      letter-spacing: -0.02em;
+      color: var(--rule);
+      user-select: none;
+    }
+
+    .chapter-foot__copy {
+      text-align: right;
+      padding-bottom: 8px;
+    }
+
+    .chapter-foot__step {
+      display: block;
+      font-family: var(--font-en);
+      font-size: 40px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      color: var(--accent);
+    }
+
+    .chapter-foot__name {
+      display: block;
+      margin-top: 8px;
+      font-size: 36px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: var(--text-2);
+    }
+
+    /* 截图模式：铺满窗口，禁用缩放 */
+    body.shot .preview-shell { padding: 0; min-height: auto; }
+    body.shot .cover-scaler {
+      width: var(--cover-w);
+      height: var(--cover-h);
+    }
+    body.shot .cover {
+      transform: none !important;
+      box-shadow: none;
+      position: relative;
+    }
+  </style>
+</head>
+<body>
+  <div class="preview-shell">
+    <div class="cover-scaler">
+      <article class="cover" aria-label="华为秋招如何免机考小红书封面">
+        <div class="cover-inner">
+          <header class="mag-bar">
+            <span class="mag-bar__line" aria-hidden="true"></span>
+            <span class="mag-bar__tag">华为校招求职分享</span>
+            <span class="mag-bar__line" aria-hidden="true"></span>
+          </header>
+
+          <section class="hero">
+            <h1 class="hero-title">
+              <span class="line">华为秋招如何免机考？</span>
+              <span class="line"><span class="emph">这几类人可直接进入面试</span></span>
+            </h1>
+
+            <ul class="points" aria-label="三种免机考路径">
+              <li class="points__item">
+                <span class="points__num">01</span>
+                <span class="points__rule" aria-hidden="true"></span>
+                <span class="points__text">机考沿用</span>
+              </li>
+              <li class="points__item">
+                <span class="points__num">02</span>
+                <span class="points__rule" aria-hidden="true"></span>
+                <span class="points__text">竞赛免考</span>
+              </li>
+              <li class="points__item">
+                <span class="points__num">03</span>
+                <span class="points__rule" aria-hidden="true"></span>
+                <span class="points__text">论文免考</span>
+              </li>
+            </ul>
+          </section>
+
+          <footer class="chapter-foot">
+            <span class="chapter-foot__label" aria-hidden="true">01</span>
+            <span class="chapter-foot__rule" aria-hidden="true"></span>
+            <div class="chapter-foot__copy">
+              <span class="chapter-foot__step">GUIDE</span>
+              <span class="chapter-foot__name">免机考政策</span>
+            </div>
+          </footer>
+        </div>
+      </article>
+    </div>
+  </div>
+  <script>
+    (function () {
+      var params = new URLSearchParams(location.search);
+      if (params.get("shot") === "1") {
+        document.body.classList.add("shot");
+        return;
+      }
+      var scaler = document.querySelector(".cover-scaler");
+      var cover = document.querySelector(".cover");
+      if (!scaler || !cover) return;
+      function fit() {
+        cover.style.transform = "scale(" + scaler.clientWidth / 1080 + ")";
+      }
+      fit();
+      window.addEventListener("resize", fit);
+    })();
+  </script>
+</body>
+</html>
