@@ -59,6 +59,24 @@ const PAGE_NAMES = [
         width: 1080px !important;
         height: 1440px !important;
       }
+      /* 导出时隐藏编辑用 UI，避免叠进 3:4 画幅 */
+      .settings-panel,
+      .page-dots {
+        display: none !important;
+        visibility: hidden !important;
+        pointer-events: none !important;
+      }
+      .scene,
+      .ex34-cover,
+      .ex34-page,
+      .ex34-card,
+      .ex34-cover__mag,
+      .ex34-cover__hero,
+      .ex34-cover__foot {
+        animation: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+      }
     `,
   });
   await page.waitForTimeout(300);
@@ -68,15 +86,21 @@ const PAGE_NAMES = [
     if (frame) frame.style.setProperty("--ex34-item-size", `${size}px`);
   }, itemSize);
 
+  // 圆点已隐藏，用键盘翻页；先回到封面
+  await page.keyboard.press("Home");
+  await page.waitForTimeout(400);
+
   for (let i = 0; i < pageCount; i++) {
-    const dot = page.locator(".page-dots__dot").nth(i);
-    await dot.click();
-    await page.waitForTimeout(750);
+    if (i > 0) {
+      await page.keyboard.press("ArrowRight");
+      await page.waitForTimeout(500);
+    }
 
     await page.evaluate((size) => {
       const frame = document.querySelector(".stage-frame");
       if (frame) frame.style.setProperty("--ex34-item-size", `${size}px`);
     }, itemSize);
+    await page.waitForTimeout(200);
 
     const name = PAGE_NAMES[i] || `page-${String(i + 1).padStart(2, "0")}`;
     const png = `${name}.png`;
