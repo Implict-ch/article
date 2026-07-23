@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hot 100 图解动画笔记 · 小红书封面 3:4</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Noto+Sans+SC:wght@400;700;900&display=swap"
+    rel="stylesheet"
+  />
+  <style>
+    :root {
+      --shell: #f3f2ee;
+      --surface: #fafaf8;
+      --surface-2: #ffffff;
+      --text: #1c1917;
+      --text-2: #44403c;
+      --rule: #e3e0d8;
+      --accent: #b45309;
+      --accent-glow: rgba(180, 83, 9, 0.18);
+      --font-cn: "Noto Sans SC", "Source Han Sans SC", sans-serif;
+      --font-en: "Chakra Petch", "Noto Sans SC", sans-serif;
+      --cover-w: 1080px;
+      --cover-h: 1440px;
+      --ease-quart: cubic-bezier(0.19, 1, 0.22, 1);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      background: var(--shell);
+      font-family: var(--font-cn);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .preview-shell {
+      min-height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .cover-scaler {
+      width: min(calc(100vw - 48px), calc((100vh - 48px) * 3 / 4));
+      aspect-ratio: 3 / 4;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cover {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: var(--cover-w);
+      height: var(--cover-h);
+      transform-origin: top left;
+      background: var(--surface);
+      overflow: hidden;
+      box-shadow:
+        0 40px 100px rgba(28, 25, 23, 0.10),
+        0 0 0 1px rgba(28, 25, 23, 0.04);
+    }
+
+    .cover::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      background-image:
+        linear-gradient(var(--accent) 1px, transparent 1px),
+        linear-gradient(90deg, var(--accent) 1px, transparent 1px);
+      background-size: 60px 60px;
+      opacity: 0.07;
+    }
+
+    .cover-inner {
+      position: relative;
+      z-index: 2;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 72px 56px 96px;
+      text-align: center;
+      gap: 36px;
+    }
+
+    .cv-cards-wrap {
+      position: relative;
+      width: 780px;
+      height: 380px;
+      flex-shrink: 0;
+    }
+
+    .cv-card {
+      position: absolute;
+      width: 200px;
+      height: auto;
+      border-radius: 6px;
+      border: 4px solid var(--surface-2);
+      box-shadow:
+        0 4px 16px rgba(28, 25, 23, 0.10),
+        0 1px 3px rgba(28, 25, 23, 0.06);
+      pointer-events: none;
+      left: 50%;
+      top: 50%;
+      object-fit: cover;
+      transform: translate(-50%, -50%) translate(var(--cx), var(--cy)) rotate(var(--cr, 0deg));
+      animation: card-float var(--fd, 3.5s) ease-in-out infinite;
+    }
+
+    @keyframes card-float {
+      0%, 100% {
+        transform: translate(-50%, -50%) translate(var(--cx), var(--cy)) rotate(var(--cr, 0deg));
+      }
+      50% {
+        transform: translate(-50%, -50%) translate(var(--cx), calc(var(--cy) - 10px)) rotate(var(--cr, 0deg));
+      }
+    }
+
+    .cv-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 28px;
+      max-width: 960px;
+    }
+
+    .cv-title {
+      font-family: var(--font-cn);
+      font-weight: 900;
+      font-size: 56px;
+      line-height: 1.35;
+      letter-spacing: -0.02em;
+      color: var(--text);
+    }
+
+    .cv-title .accent {
+      font-family: var(--font-en);
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      color: var(--accent);
+    }
+
+    .cv-line {
+      width: 120px;
+      height: 4px;
+      background: var(--accent);
+      border-radius: 2px;
+    }
+
+    .cv-sub {
+      font-size: 28px;
+      font-weight: 400;
+      color: var(--text-2);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      letter-spacing: 0.06em;
+    }
+
+    .cv-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 12px var(--accent-glow);
+    }
+
+    @media print {
+      .preview-shell { padding: 0; }
+      .cover-scaler { width: var(--cover-w); height: var(--cover-h); }
+      .cover { transform: none; box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="preview-shell">
+    <div class="cover-scaler">
+      <article class="cover" aria-label="Hot 100 图解动画笔记封面">
+        <div class="cover-inner">
+          <div class="cv-cards-wrap">
+            <img class="cv-card" style="--cx:-250px; --cy:-95px; --cr:-5deg; --fd:3.6s" src="src/1.png" alt="" />
+            <img class="cv-card" style="--cx:-85px; --cy:-80px; --cr:3deg; --fd:4.1s" src="src/2.png" alt="" />
+            <img class="cv-card" style="--cx:85px; --cy:-90px; --cr:-2.5deg; --fd:3.4s" src="src/3.png" alt="" />
+            <img class="cv-card" style="--cx:250px; --cy:-75px; --cr:4deg; --fd:4.3s" src="src/4.png" alt="" />
+            <img class="cv-card" style="--cx:-195px; --cy:55px; --cr:2.5deg; --fd:3.8s" src="src/5.png" alt="" />
+            <img class="cv-card" style="--cx:-65px; --cy:72px; --cr:-3.5deg; --fd:4.0s" src="src/6.png" alt="" />
+            <img class="cv-card" style="--cx:65px; --cy:58px; --cr:1.5deg; --fd:3.5s" src="src/7.png" alt="" />
+            <img class="cv-card" style="--cx:195px; --cy:78px; --cr:-2.8deg; --fd:4.2s" src="src/8.png" alt="" />
+          </div>
+
+          <div class="cv-content">
+            <h1 class="cv-title">
+              花了半年，我把 <span class="accent">力扣Hot 100</span> 每道题<br />
+              都做成了图解+动画
+            </h1>
+            <div class="cv-line" aria-hidden="true"></div>
+            <p class="cv-sub">
+              塔子哥<span class="cv-dot"></span>CodeFun2000
+            </p>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+  <script>
+    (function () {
+      var scaler = document.querySelector(".cover-scaler");
+      var cover = document.querySelector(".cover");
+      if (!scaler || !cover) return;
+      function fit() {
+        var s = scaler.clientWidth / 1080;
+        cover.style.transform = "scale(" + s + ")";
+      }
+      fit();
+      window.addEventListener("resize", fit);
+    })();
+  </script>
+</body>
+</html>

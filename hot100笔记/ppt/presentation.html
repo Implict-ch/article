@@ -1,0 +1,1252 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hot 100 · 图解动画笔记</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Noto+Sans+SC:wght@400;700;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════════════════
+   0. Reset
+   ═══════════════════════════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; }
+img, svg { display: block; max-width: 100%; }
+
+/* ═══════════════════════════════════════════════════════════════════
+   1. Design Tokens — paper-warm-gray
+   ═══════════════════════════════════════════════════════════════════ */
+:root {
+  --shell:       #f3f2ee;
+  --surface:     #fafaf8;
+  --surface-2:   #ffffff;
+  --surface-3:   #f5f4f0;
+  --text:        #1c1917;
+  --text-2:      #44403c;
+  --text-mute:   #57534e;
+  --text-faint:  #a8a29e;
+  --rule:        #e3e0d8;
+  --accent:      #b45309;
+  --accent-soft: rgba(180, 83, 9, 0.10);
+  --accent-glow: rgba(180, 83, 9, 0.18);
+
+  --font-cn:   "Noto Sans SC", "Source Han Sans SC", -apple-system, sans-serif;
+  --font-en:   "Chakra Petch", "Noto Sans SC", -apple-system, sans-serif;
+  --font-body: "Noto Sans SC", "Inter", -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", "SF Mono", ui-monospace, monospace;
+
+  --r-card:    8px;
+  --rule-w:    1px;
+  --stage-px:  96px;
+  --stage-py:  80px;
+  --space-2:   8px;
+  --space-3:   12px;
+  --space-4:   16px;
+  --space-5:   24px;
+  --space-7:   48px;
+
+  --ease-quart:     cubic-bezier(0.19, 1, 0.22, 1);
+  --ease-expo:      cubic-bezier(0.86, 0, 0.07, 1);
+  --ease-overshoot: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  --card-shadow:
+    0 1px 0 var(--rule),
+    0 8px 24px rgba(28, 25, 23, 0.06);
+  --shadow-stage:
+    0 40px 100px rgba(28, 25, 23, 0.10),
+    0 0 0 1px rgba(28, 25, 23, 0.04);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   2. Stage Chrome
+   ═══════════════════════════════════════════════════════════════════ */
+body {
+  font-family: var(--font-cn);
+  color: var(--text);
+  background: var(--shell);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: geometricPrecision;
+  cursor: default;
+}
+::selection { background: var(--accent); color: var(--surface); }
+
+.app-shell {
+  position: fixed; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--shell);
+}
+.stage-fitter { position: relative; }
+.stage-frame {
+  position: absolute; top: 0; left: 0;
+  width: 1920px; height: 1080px;
+  transform-origin: top left;
+  background: var(--surface);
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: var(--shadow-stage);
+}
+
+/* amber grid pattern overlay */
+.stage-frame::after {
+  content: "";
+  position: absolute; inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(var(--accent) 1px, transparent 1px),
+    linear-gradient(90deg, var(--accent) 1px, transparent 1px);
+  background-size: 60px 60px;
+  animation: grid-pulse 4s ease infinite;
+  z-index: 1;
+}
+@keyframes grid-pulse {
+  0%, 100% { opacity: 0.03; }
+  50%      { opacity: 0.07; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   3. Slides — shared
+   ═══════════════════════════════════════════════════════════════════ */
+.slide {
+  position: absolute; inset: 0; z-index: 2;
+  display: none;
+  flex-direction: column;
+  padding: var(--stage-py) var(--stage-px);
+}
+.slide.active { display: flex; }
+
+/* ═══════════════════════════════════════════════════════════════════
+   4. Reveal System
+   ═══════════════════════════════════════════════════════════════════ */
+[data-reveal] {
+  visibility: hidden;
+  opacity: 0;
+}
+[data-reveal].revealed {
+  visibility: visible;
+  opacity: 0;
+  transform: translateY(12px);
+  animation: rise 0.55s var(--ease-quart) forwards;
+}
+
+@keyframes rise {
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes pop-in {
+  to { transform: scale(1); }
+}
+@keyframes line-grow {
+  to { transform: scaleX(1); }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   5. Typography Primitives
+   ═══════════════════════════════════════════════════════════════════ */
+.display-cn {
+  font-family: var(--font-cn);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+}
+.display-en {
+  font-family: var(--font-en);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+.accent { color: var(--accent); }
+.label-mono {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-mute);
+  font-weight: 500;
+}
+.kicker {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   6. Card Primitive
+   ═══════════════════════════════════════════════════════════════════ */
+.card {
+  background: var(--surface-2);
+  border: var(--rule-w) solid var(--rule);
+  border-radius: var(--r-card);
+  box-shadow: var(--card-shadow);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   7. SVG Icon Base (Lucide conventions)
+   ═══════════════════════════════════════════════════════════════════ */
+.icon-lucide {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   S0. Blank
+   ═══════════════════════════════════════════════════════════════════ */
+.blank-scene {
+  background: var(--surface);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   S1. Cover
+   ═══════════════════════════════════════════════════════════════════ */
+.cv-scene {
+  padding: 0;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 20px;
+}
+
+/* scattered card group above title */
+.cv-cards-wrap {
+  position: relative;
+  width: 1100px;
+  height: 310px;
+  z-index: 3;
+  flex-shrink: 0;
+  top:-70px;
+}
+.cv-card {
+  position: absolute;
+  width: 220px;
+  height: auto;
+  border-radius: 6px;
+  border: 4px solid var(--surface-2);
+  box-shadow:
+    0 4px 16px rgba(28, 25, 23, 0.10),
+    0 1px 3px rgba(28, 25, 23, 0.06);
+  pointer-events: none;
+  left: 50%;
+  top: 50%;
+  object-fit: cover;
+}
+.cv-card.revealed {
+  visibility: visible;
+  opacity: 0;
+  transform: none;
+  animation:
+    card-enter 0.7s var(--ease-quart) calc(var(--ci, 0) * 120ms) both,
+    card-float var(--fd, 3.5s) ease-in-out calc(var(--ci, 0) * 120ms + 0.85s) infinite;
+}
+
+@keyframes card-enter {
+  from {
+    opacity: 0;
+    transform: translate(var(--cx), var(--cy)) rotate(var(--cr, 0deg)) scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: translate(var(--cx), var(--cy)) rotate(var(--cr, 0deg)) scale(1);
+  }
+}
+@keyframes card-float {
+  0%, 100% {
+    transform: translate(var(--cx), var(--cy)) rotate(var(--cr, 0deg));
+  }
+  50% {
+    transform: translate(var(--cx), calc(var(--cy) - 10px)) rotate(var(--cr, 0deg));
+  }
+}
+
+.cv-content {
+  position: relative;
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-5);
+}
+.cv-title {
+  font-size: clamp(56px, 5vw, 72px);
+  line-height: 1.3;
+  max-width: 1200px;
+}
+.cv-sub {
+  font-size: 26px;
+  font-weight: 400;
+  color: var(--text-2);
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  letter-spacing: 0.06em;
+}
+.cv-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 12px var(--accent-glow);
+}
+.cv-line {
+  width: 120px; height: 4px;
+  background: var(--accent);
+  border-radius: 2px;
+  transform: scaleX(0);
+  transform-origin: center;
+}
+.cv-line.revealed {
+  animation: line-grow 0.65s var(--ease-expo) 0.4s forwards;
+  opacity: 1;
+  visibility: visible;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   S2. Why (pain points)
+   ═══════════════════════════════════════════════════════════════════ */
+.wh-scene {
+  justify-content: center;
+  gap: var(--space-7);
+}
+.wh-title {
+  font-size: clamp(56px, 5vw, 80px);
+  line-height: 1.1;
+}
+.wh-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  max-width: 1100px;
+  width: 100%;
+}
+.wh-card {
+  padding: var(--space-7) 40px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+.wh-icon-wrap {
+  width: 56px; height: 56px;
+  border-radius: 14px;
+  background: #fef2f2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.wh-icon-wrap svg {
+  width: 28px; height: 28px;
+  color: #dc2626;
+}
+.wh-card h3 {
+  font-family: var(--font-cn);
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+}
+.wh-card p {
+  font-size: 22px;
+  color: var(--text-mute);
+  line-height: 1.5;
+}
+.wh-conclusion {
+  font-size: 28px;
+  text-align: center;
+  line-height: 1.5;
+  max-width: 900px;
+  align-self: center;
+}
+.wh-conclusion strong {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   S3. Features (2×2 grid)
+   ═══════════════════════════════════════════════════════════════════ */
+.ft-scene {
+  justify-content: center;
+  gap: var(--space-7);
+}
+.ft-title {
+  font-size: clamp(56px, 5vw, 80px);
+  line-height: 1.1;
+}
+.ft-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  max-width: 1100px;
+  width: 100%;
+}
+.ft-card {
+  padding: 40px 36px;
+  display: flex;
+  gap: var(--space-5);
+  align-items: flex-start;
+}
+.ft-icon-wrap {
+  width: 56px; height: 56px;
+  min-width: 56px;
+  border-radius: 14px;
+  background: var(--accent-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ft-icon-wrap svg {
+  width: 26px; height: 26px;
+  color: var(--accent);
+}
+.ft-card h3 {
+  font-family: var(--font-cn);
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.3;
+  margin-bottom: 6px;
+}
+.ft-card p {
+  font-size: 20px;
+  color: var(--text-mute);
+  line-height: 1.45;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   S4. Demo — Roadmap Pipeline
+   ═══════════════════════════════════════════════════════════════════ */
+.dm-scene {
+  justify-content: center;
+  align-items: center;
+  gap: 56px;
+}
+.dm-title {
+  font-size: clamp(48px, 4vw, 64px);
+  line-height: 1.1;
+}
+.dm-pipeline {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  width: 100%;
+  max-width: 1560px;
+}
+.dm-node {
+  flex-shrink: 0;
+  width: 154px;
+  height: 154px;
+  background: var(--surface-2);
+  border: var(--rule-w) solid var(--rule);
+  border-radius: var(--r-card);
+  box-shadow: var(--card-shadow);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+.dm-node__icon {
+  width: 44px; height: 44px;
+  border-radius: 12px;
+  background: var(--accent-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.dm-node__icon svg {
+  width: 22px; height: 22px;
+  color: var(--accent);
+}
+.dm-node__label {
+  font-family: var(--font-cn);
+  font-size: 18px;
+  font-weight: 700;
+  white-space: nowrap;
+  color: var(--text);
+  text-align: center;
+}
+.dm-node__num {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-faint);
+  letter-spacing: 0.1em;
+}
+
+/* accent dashed connector with flowing animation */
+.dm-connector {
+  flex: 1;
+  min-width: 40px;
+  height: 2px;
+  position: relative;
+  overflow: visible;
+  background: none;
+}
+.dm-connector__line {
+  position: absolute;
+  inset: 0;
+  border: none;
+  border-top: 2px dashed var(--accent);
+  opacity: 0.55;
+}
+.dm-connector__flow {
+  position: absolute;
+  top: -1px;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  background-size: 40% 100%;
+  animation: dash-flow 1.8s linear infinite;
+  opacity: 0.6;
+}
+@keyframes dash-flow {
+  from { background-position: -40% 0; }
+  to   { background-position: 140% 0; }
+}
+.dm-connector__arrow {
+  position: absolute;
+  right: -3px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0; height: 0;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-left: 7px solid var(--accent);
+  opacity: 0.7;
+}
+
+/* stagger pipeline nodes entry */
+.dm-pipeline.revealed .dm-node {
+  opacity: 0;
+  animation: pipe-node-in 0.5s var(--ease-quart) calc(var(--pi, 0) * 160ms) forwards;
+}
+.dm-pipeline.revealed .dm-connector {
+  opacity: 0;
+  animation: pipe-conn-in 0.4s var(--ease-quart) calc(var(--pi, 0) * 160ms + 80ms) forwards;
+}
+@keyframes pipe-node-in {
+  from { opacity: 0; transform: translateY(18px) scale(0.88); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes pipe-conn-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   S5. Feedback — comment cards
+   ═══════════════════════════════════════════════════════════════════ */
+.fb-scene {
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+}
+.fb-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px 24px;
+  max-width: 1560px;
+  width: 100%;
+}
+.fb-comment {
+  border-radius: var(--r-card);
+  border: var(--rule-w) solid var(--rule);
+  box-shadow: var(--card-shadow);
+  overflow: hidden;
+  background: var(--surface-2);
+  transform: rotate(var(--fr, 0deg));
+  transition: transform 0.3s var(--ease-quart), box-shadow 0.3s;
+}
+.fb-comment img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.fb-comment[data-reveal].revealed {
+  visibility: visible;
+  opacity: 0;
+  transform: rotate(var(--fr, 0deg)) scale(0.7);
+  animation: comment-pop 0.5s var(--ease-overshoot) calc(var(--fi, 0) * 110ms) forwards;
+}
+@keyframes comment-pop {
+  from {
+    opacity: 0;
+    transform: rotate(var(--fr, 0deg)) scale(0.65);
+  }
+  70% {
+    opacity: 1;
+    transform: rotate(var(--fr, 0deg)) scale(1.04);
+  }
+  to {
+    opacity: 1;
+    transform: rotate(var(--fr, 0deg)) scale(1);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   S6. CTA + engage-hook chips
+   ═══════════════════════════════════════════════════════════════════ */
+.ct-scene {
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 32px;
+}
+.ct-lead {
+  font-size: 32px;
+  color: var(--text-2);
+  font-weight: 400;
+}
+.ct-url {
+  font-family: var(--font-mono);
+  font-size: clamp(36px, 3.2vw, 48px);
+  font-weight: 600;
+  color: var(--text);
+  padding: 24px 56px;
+  position: relative;
+  letter-spacing: -0.01em;
+}
+.ct-url::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 32px; right: 32px;
+  height: 3px;
+  background: var(--accent);
+  border-radius: 2px;
+}
+.ct-url::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 32px; right: 32px;
+  height: var(--rule-w);
+  background: var(--rule);
+}
+.ct-note {
+  font-size: 20px;
+  color: var(--text-faint);
+  letter-spacing: 0.08em;
+}
+
+/* engage-hook three-action chips */
+.ct-hook-label {
+  font-family: var(--font-cn);
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--text-2);
+  letter-spacing: 0.04em;
+}
+.ct-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 48px;
+}
+.ct-chip {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  width: 128px;
+  opacity: 0.38;
+  transform: scale(0.92);
+  transition: opacity 0.4s var(--ease-quart), transform 0.4s var(--ease-quart);
+}
+.ct-chip-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  border: 2px solid var(--rule);
+  background: var(--surface-2);
+  color: var(--text-mute);
+  box-shadow: var(--card-shadow);
+  transition: background 0.35s, color 0.35s, border-color 0.35s, box-shadow 0.35s;
+}
+.ct-chip-icon svg {
+  width: 40px; height: 40px;
+}
+.ct-chip-label {
+  font-family: var(--font-cn);
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text-2);
+  letter-spacing: 0.06em;
+  transition: color 0.35s;
+}
+
+/* active state — pulsing highlight */
+.ct-chip--active {
+  opacity: 1;
+  transform: scale(1.12);
+}
+.ct-chip--active .ct-chip-icon {
+  border-color: rgba(180, 83, 9, 0.55);
+  background: linear-gradient(180deg, #fff7ed 0%, var(--surface-2) 100%);
+  color: var(--accent);
+  box-shadow:
+    0 10px 24px rgba(180, 83, 9, 0.18),
+    0 0 0 4px rgba(180, 83, 9, 0.10);
+}
+.ct-chip--active .ct-chip-label {
+  color: var(--accent);
+}
+.ct-chip-ring {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 88px; height: 88px;
+  margin-left: -44px;
+  border-radius: 50%;
+  border: 2px solid var(--accent);
+  pointer-events: none;
+  opacity: 0;
+}
+.ct-chip--active .ct-chip-ring {
+  animation: chip-ring-pulse 0.9s var(--ease-quart) infinite;
+}
+@keyframes chip-ring-pulse {
+  from { transform: scale(0.85); opacity: 0.7; }
+  to   { transform: scale(1.4);  opacity: 0; }
+}
+
+/* done state — settled */
+.ct-chip--done {
+  opacity: 1;
+  transform: scale(1);
+}
+.ct-chip--done .ct-chip-icon {
+  border-color: rgba(180, 83, 9, 0.35);
+  color: var(--text-2);
+}
+
+.ct-hook-brand {
+  font-family: var(--font-body);
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--text-faint);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   Controls (hidden by default, hover to show)
+   ═══════════════════════════════════════════════════════════════════ */
+.controls {
+  position: fixed;
+  bottom: 20px; left: 50%;
+  transform: translateX(-50%);
+  display: flex; align-items: center; gap: 14px;
+  opacity: 0;
+  transition: opacity 0.3s;
+  z-index: 100;
+}
+body:hover .controls { opacity: 0.4; }
+.controls:hover { opacity: 1 !important; }
+
+.controls button {
+  width: 36px; height: 36px;
+  border: none; border-radius: 6px;
+  background: rgba(255,255,255,0.85);
+  color: var(--text);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  transition: background 0.2s;
+}
+.controls button:hover { background: #fff; }
+
+.step-counter {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--text-faint);
+  min-width: 60px;
+  text-align: center;
+}
+</style>
+</head>
+<body>
+<div class="app-shell">
+  <div class="stage-fitter">
+    <div class="stage-frame" id="stage">
+
+      <!-- ════════════════════════════════════════════════════════════
+           S0. Blank  (global step 0)
+           ════════════════════════════════════════════════════════════ -->
+      <section class="slide blank-scene" data-slide="0"></section>
+
+      <!-- ════════════════════════════════════════════════════════════
+           S1. Cover  (global step 1)
+           ════════════════════════════════════════════════════════════ -->
+      <section class="slide cv-scene" data-slide="1">
+        <!-- scattered cards above title -->
+        <div class="cv-cards-wrap">
+          <!-- row 1 -->
+          <img class="cv-card" data-reveal="1"
+               style="--cx:-440px; --cy:-80px; --cr:-5deg;   --ci:0; --fd:3.6s"
+               src="src/1.png" alt="">
+          <img class="cv-card" data-reveal="1"
+               style="--cx:-190px; --cy:-60px; --cr:3deg;    --ci:1; --fd:4.1s"
+               src="src/2.png" alt="">
+          <img class="cv-card" data-reveal="1"
+               style="--cx:50px;   --cy:-75px; --cr:-2.5deg; --ci:2; --fd:3.4s"
+               src="src/3.png" alt="">
+          <img class="cv-card" data-reveal="1"
+               style="--cx:300px;  --cy:-55px; --cr:4deg;    --ci:3; --fd:4.3s"
+               src="src/4.png" alt="">
+          <!-- row 2 -->
+          <img class="cv-card" data-reveal="1"
+               style="--cx:-360px; --cy:30px;  --cr:2.5deg;  --ci:4; --fd:3.8s"
+               src="src/5.png" alt="">
+          <img class="cv-card" data-reveal="1"
+               style="--cx:-110px; --cy:50px;  --cr:-3.5deg; --ci:5; --fd:4.0s"
+               src="src/6.png" alt="">
+          <img class="cv-card" data-reveal="1"
+               style="--cx:140px;  --cy:35px;  --cr:1.5deg;  --ci:6; --fd:3.5s"
+               src="src/7.png" alt="">
+          <img class="cv-card" data-reveal="1"
+               style="--cx:380px;  --cy:55px;  --cr:-2.8deg; --ci:7; --fd:4.2s"
+               src="src/8.png" alt="">
+        </div>
+
+        <div class="cv-content">
+          <h1 class="cv-title display-cn" data-reveal="1">
+            花了半年，我把 <span class="accent display-en">力扣Hot 100</span> 每道题<br>都做成了图解+动画
+          </h1>
+          <div class="cv-line" data-reveal="1"></div>
+          <p class="cv-sub" data-reveal="1">
+            塔子哥<span class="cv-dot"></span>CodeFun2000
+          </p>
+        </div>
+      </section>
+
+      <!-- ════════════════════════════════════════════════════════════
+           S2. Why — pain points  (global steps 1-4)
+           ════════════════════════════════════════════════════════════ -->
+      <section class="slide wh-scene" data-slide="2">
+        <h2 class="wh-title display-cn" data-reveal="2">为什么做这个？</h2>
+
+        <div class="wh-cards">
+          <!-- pain card 1 -->
+          <div class="wh-card card" data-reveal="3">
+            <div class="wh-icon-wrap">
+              <svg class="icon-lucide" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="m15 9-6 6"/><path d="m9 9 6 6"/>
+              </svg>
+            </div>
+            <h3>现有题解太糙</h3>
+            <p>代码 + 几句话就完事，新手看完还是不会</p>
+          </div>
+
+          <!-- pain card 2 -->
+          <div class="wh-card card" data-reveal="4">
+            <div class="wh-icon-wrap">
+              <svg class="icon-lucide" viewBox="0 0 24 24">
+                <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
+                <path d="M12 9v4"/><path d="M12 17h.01"/>
+              </svg>
+            </div>
+            <h3>官方分类不友好</h3>
+            <p>难度跳跃大，同章节知识点混着考</p>
+          </div>
+        </div>
+
+        <p class="wh-conclusion" data-reveal="5">
+          所以我想做一套 <strong>可以从头刷到尾、系统高效</strong> 的 Hot 100 图文动画笔记
+        </p>
+      </section>
+
+      <!-- ════════════════════════════════════════════════════════════
+           S3. Features — 2×2 grid  (global steps 5-9)
+           ════════════════════════════════════════════════════════════ -->
+      <section class="slide ft-scene" data-slide="3">
+        <h2 class="ft-title display-cn" data-reveal="5">我做了哪些事情？</h2>
+        <div class="ft-grid">
+          <!-- card 1: FileText -->
+          <div class="ft-card card" data-reveal="7">
+            <div class="ft-icon-wrap">
+              <svg class="icon-lucide" viewBox="0 0 24 24">
+                <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/>
+                <path d="M14 2v4a2 2 0 0 0 2 2h4"/>
+                <path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/>
+              </svg>
+            </div>
+            <div>
+              <h3>100 篇完整题解</h3>
+              <p>图解 + 动画 + 面试问答</p>
+            </div>
+          </div>
+
+          <!-- card 2: ArrowUpDown -->
+          <div class="ft-card card" data-reveal="8">
+            <div class="ft-icon-wrap">
+              <svg class="icon-lucide" viewBox="0 0 24 24">
+                <path d="m21 16-4 4-4-4"/><path d="M17 20V4"/>
+                <path d="m3 8 4-4 4 4"/><path d="M7 4v16"/>
+              </svg>
+            </div>
+            <div>
+              <h3>重新编排顺序</h3>
+              <p>按知识点分类，同类题由易到难</p>
+            </div>
+          </div>
+
+          <!-- card 3: BookOpen -->
+          <div class="ft-card card" data-reveal="9">
+            <div class="ft-icon-wrap">
+              <svg class="icon-lucide" viewBox="0 0 24 24">
+                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+              </svg>
+            </div>
+            <div>
+              <h3>基础知识章节</h3>
+              <p>堆、二叉树、哈希表等原理讲解</p>
+            </div>
+          </div>
+
+          <!-- card 4: Terminal -->
+          <div class="ft-card card" data-reveal="10">
+            <div class="ft-icon-wrap">
+              <svg class="icon-lucide" viewBox="0 0 24 24">
+                <polyline points="4 17 10 11 4 5"/>
+                <line x1="12" x2="20" y1="19" y2="19"/>
+              </svg>
+            </div>
+            <div>
+              <h3>ACM 模式题库</h3>
+              <p>适配非力扣的输入输出模式</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ════════════════════════════════════════════════════════════
+           S4. Demo — Roadmap  (global step 10)
+           ════════════════════════════════════════════════════════════ -->
+      <section class="slide dm-scene" data-slide="4">
+        <h2 class="dm-title display-cn" data-reveal="11">一篇题解长什么样</h2>
+        <div class="dm-pipeline" data-reveal="11">
+          <!-- 1. 题目 -->
+          <div class="dm-node" style="--pi:0">
+            <div class="dm-node__icon">
+              <svg class="icon-lucide" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+                <path d="M12 17h.01"/>
+              </svg>
+            </div>
+            <span class="dm-node__label">题目</span>
+            <span class="dm-node__num">01</span>
+          </div>
+          <div class="dm-connector" style="--pi:0">
+            <div class="dm-connector__line"></div>
+            <div class="dm-connector__flow"></div>
+            <div class="dm-connector__arrow"></div>
+          </div>
+          <!-- 2. 思路 -->
+          <div class="dm-node" style="--pi:1">
+            <div class="dm-node__icon">
+              <svg class="icon-lucide" viewBox="0 0 24 24">
+                <path d="M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2Z"/>
+                <path d="M10 21h4"/>
+              </svg>
+            </div>
+            <span class="dm-node__label">思路</span>
+            <span class="dm-node__num">02</span>
+          </div>
+          <div class="dm-connector" style="--pi:1">
+            <div class="dm-connector__line"></div>
+            <div class="dm-connector__flow"></div>
+            <div class="dm-connector__arrow"></div>
+          </div>
+          <!-- 3. 配图 -->
+          <div class="dm-node" style="--pi:2">
+            <div class="dm-node__icon">
+              <svg class="icon-lucide" viewBox="0 0 24 24">
+                <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
+                <circle cx="9" cy="9" r="2"/>
+                <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
+              </svg>
+            </div>
+            <span class="dm-node__label">配图</span>
+            <span class="dm-node__num">03</span>
+          </div>
+          <div class="dm-connector" style="--pi:2">
+            <div class="dm-connector__line"></div>
+            <div class="dm-connector__flow"></div>
+            <div class="dm-connector__arrow"></div>
+          </div>
+          <!-- 4. 动画 -->
+          <div class="dm-node" style="--pi:3">
+            <div class="dm-node__icon">
+              <svg class="icon-lucide" viewBox="0 0 24 24">
+                <polygon points="6 3 20 12 6 21 6 3"/>
+              </svg>
+            </div>
+            <span class="dm-node__label">动画</span>
+            <span class="dm-node__num">04</span>
+          </div>
+          <div class="dm-connector" style="--pi:3">
+            <div class="dm-connector__line"></div>
+            <div class="dm-connector__flow"></div>
+            <div class="dm-connector__arrow"></div>
+          </div>
+          <!-- 5. 全语言题解 -->
+          <div class="dm-node" style="--pi:4">
+            <div class="dm-node__icon">
+              <svg class="icon-lucide" viewBox="0 0 24 24">
+                <polyline points="16 18 22 12 16 6"/>
+                <polyline points="8 6 2 12 8 18"/>
+              </svg>
+            </div>
+            <span class="dm-node__label">全语言题解</span>
+            <span class="dm-node__num">05</span>
+          </div>
+          <div class="dm-connector" style="--pi:4">
+            <div class="dm-connector__line"></div>
+            <div class="dm-connector__flow"></div>
+            <div class="dm-connector__arrow"></div>
+          </div>
+          <!-- 6. 面试标准化问答 -->
+          <div class="dm-node" style="--pi:5">
+            <div class="dm-node__icon">
+              <svg class="icon-lucide" viewBox="0 0 24 24">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+              </svg>
+            </div>
+            <span class="dm-node__label">面试问答</span>
+            <span class="dm-node__num">06</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ════════════════════════════════════════════════════════════
+           S5. Feedback — comment cards  (global step 11)
+           ════════════════════════════════════════════════════════════ -->
+      <section class="slide fb-scene" data-slide="5">
+        <h2 class="dm-title display-cn" data-reveal="12">反馈</h2>
+        <div class="fb-grid">
+          <div class="fb-comment" data-reveal="12" style="--fi:0; --fr:-2.2deg">
+            <img src="comments/1.png" alt="评论1">
+          </div>
+          <div class="fb-comment" data-reveal="12" style="--fi:1; --fr:1.5deg">
+            <img src="comments/2.png" alt="评论2">
+          </div>
+          <div class="fb-comment" data-reveal="12" style="--fi:2; --fr:-1deg">
+            <img src="comments/3.png" alt="评论3">
+          </div>
+          <div class="fb-comment" data-reveal="12" style="--fi:3; --fr:2.5deg">
+            <img src="comments/4.png" alt="评论4">
+          </div>
+          <div class="fb-comment" data-reveal="12" style="--fi:4; --fr:1.8deg">
+            <img src="comments/5.png" alt="评论5">
+          </div>
+          <div class="fb-comment" data-reveal="12" style="--fi:5; --fr:-2deg">
+            <img src="comments/6.png" alt="评论6">
+          </div>
+          <div class="fb-comment" data-reveal="12" style="--fi:6; --fr:1.2deg">
+            <img src="comments/7.png" alt="评论7">
+          </div>
+          <div class="fb-comment" data-reveal="12" style="--fi:7; --fr:-1.8deg">
+            <img src="comments/8.png" alt="评论8">
+          </div>
+        </div>
+      </section>
+
+      <!-- ════════════════════════════════════════════════════════════
+           S6. CTA  (global step 12)
+           ════════════════════════════════════════════════════════════ -->
+      <section class="slide ct-scene" data-slide="6">
+        <p class="ct-lead" data-reveal="13">打开就能用，从第一题开始</p>
+        <div class="ct-url card" data-reveal="13">CodeFun2000.com/codenote/hot100</div>
+        <p class="ct-note" data-reveal="13">持续更新中</p>
+      </section>
+
+      <!-- ════════════════════════════════════════════════════════════
+           S7. Engage Hook — 三连  (global step 14)
+           ════════════════════════════════════════════════════════════ -->
+      <section class="slide ct-scene" data-slide="7">
+        <p class="ct-hook-label" data-reveal="14">觉得有帮助？</p>
+        <div class="ct-actions" data-reveal="14" id="ct-actions">
+          <!-- 点赞 -->
+          <div class="ct-chip" data-hook="0">
+            <span class="ct-chip-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round">
+                <path d="M7 10v10H4V10h3zm1.5-2.5 1.8-3.6A2 2 0 0 1 14 6v4h5.2a2 2 0 0 1 1.95 2.52l-1.4 5.6A2 2 0 0 1 17.85 20H9.5V7.5z"/>
+              </svg>
+            </span>
+            <span class="ct-chip-label">点赞</span>
+            <span class="ct-chip-ring"></span>
+          </div>
+          <!-- 收藏 -->
+          <div class="ct-chip" data-hook="1">
+            <span class="ct-chip-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round">
+                <path d="M12 2l2.9 6.9 7.4.6-5.6 4.9 1.7 7.2L12 18.8 5.6 21.6l1.7-7.2L1.7 9.5l7.4-.6L12 2z"/>
+              </svg>
+            </span>
+            <span class="ct-chip-label">收藏</span>
+            <span class="ct-chip-ring"></span>
+          </div>
+          <!-- 关注 -->
+          <div class="ct-chip" data-hook="2">
+            <span class="ct-chip-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="9" cy="8" r="3.2"/>
+                <path d="M3.5 19.5c0-3 2.5-5.2 5.5-5.2s5.5 2.2 5.5 5.2"/>
+                <path d="M17 8v6M14 11h6"/>
+              </svg>
+            </span>
+            <span class="ct-chip-label">关注</span>
+            <span class="ct-chip-ring"></span>
+          </div>
+        </div>
+        <span class="ct-hook-brand" data-reveal="14">塔子哥学算法</span>
+      </section>
+
+    </div><!-- stage-frame -->
+  </div><!-- stage-fitter -->
+</div><!-- app-shell -->
+
+<!-- Controls -->
+<div class="controls">
+  <button id="btn-prev" aria-label="上一步">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+         stroke="currentColor" stroke-width="2.5"
+         stroke-linecap="round" stroke-linejoin="round">
+      <path d="m15 18-6-6 6-6"/>
+    </svg>
+  </button>
+  <span class="step-counter" id="counter"></span>
+  <button id="btn-next" aria-label="下一步">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+         stroke="currentColor" stroke-width="2.5"
+         stroke-linecap="round" stroke-linejoin="round">
+      <path d="m9 18 6-6-6-6"/>
+    </svg>
+  </button>
+</div>
+
+<script>
+(function () {
+  var TOTAL_STEPS = 15;
+  var SLIDE_RANGES = [
+    [0, 0],
+    [1, 1],
+    [2, 5],
+    [6, 10],
+    [11, 11],
+    [12, 12],
+    [13, 13],
+    [14, 14]
+  ];
+
+  var stage   = document.getElementById('stage');
+  var fitter  = document.querySelector('.stage-fitter');
+  var slides  = document.querySelectorAll('.slide');
+  var reveals = document.querySelectorAll('[data-reveal]');
+  var counter = document.getElementById('counter');
+  var step    = parseInt(localStorage.getItem('hot100-step') || '0', 10);
+
+  /* ── engage-hook: sequential highlight on CTA slide ── */
+  var hookChips = document.querySelectorAll('#ct-actions .ct-chip');
+  var hookTimers = [];
+  var hookPhaseMs = [700, 1900, 3100, 4300];
+  var hookRunning = false;
+
+  function resetHook() {
+    hookTimers.forEach(clearTimeout);
+    hookTimers = [];
+    hookRunning = false;
+    hookChips.forEach(function (c) {
+      c.classList.remove('ct-chip--active', 'ct-chip--done');
+    });
+  }
+
+  function startHook() {
+    if (hookRunning) return;
+    hookRunning = true;
+    hookChips.forEach(function (c) {
+      c.classList.remove('ct-chip--active', 'ct-chip--done');
+    });
+    hookPhaseMs.forEach(function (ms, idx) {
+      hookTimers.push(setTimeout(function () {
+        hookChips.forEach(function (c, ci) {
+          c.classList.remove('ct-chip--active');
+          if (ci < idx) c.classList.add('ct-chip--done');
+        });
+        if (idx < hookChips.length) {
+          hookChips[idx].classList.add('ct-chip--active');
+        } else {
+          hookChips.forEach(function (c) { c.classList.add('ct-chip--done'); });
+        }
+      }, ms));
+    });
+  }
+
+  function scaleStage() {
+    var sx = window.innerWidth / 1920;
+    var sy = window.innerHeight / 1080;
+    var s  = Math.min(sx, sy);
+    stage.style.transform = 'scale(' + s + ')';
+    fitter.style.width  = (1920 * s) + 'px';
+    fitter.style.height = (1080 * s) + 'px';
+  }
+
+  function render() {
+    step = Math.max(0, Math.min(step, TOTAL_STEPS - 1));
+
+    slides.forEach(function (sl, i) {
+      var range = SLIDE_RANGES[i];
+      var active = step >= range[0] && step <= range[1];
+      sl.classList.toggle('active', active);
+    });
+
+    reveals.forEach(function (el) {
+      var at = parseInt(el.dataset.reveal, 10);
+      var shouldShow = step >= at;
+
+      var isInActiveSlide = el.closest('.slide.active');
+
+      if (shouldShow && isInActiveSlide && !el.classList.contains('revealed')) {
+        void el.offsetWidth;
+        el.classList.add('revealed');
+      } else if (!shouldShow || !isInActiveSlide) {
+        el.classList.remove('revealed');
+      }
+    });
+
+    localStorage.setItem('hot100-step', step);
+    counter.textContent = (step + 1) + ' / ' + TOTAL_STEPS;
+
+    if (step === 14) { startHook(); } else { resetHook(); }
+  }
+
+  function next() { step++; render(); }
+  function prev() { step--; render(); }
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); next(); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
+  });
+
+  stage.addEventListener('click', function (e) {
+    if (!e.target.closest('.controls')) next();
+  });
+
+  document.getElementById('btn-prev').addEventListener('click', function (e) {
+    e.stopPropagation(); prev();
+  });
+  document.getElementById('btn-next').addEventListener('click', function (e) {
+    e.stopPropagation(); next();
+  });
+
+  window.addEventListener('resize', scaleStage);
+  scaleStage();
+  render();
+})();
+</script>
+</body>
+</html>

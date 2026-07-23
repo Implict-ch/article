@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>题库列表 · 三风格对照</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Noto+Sans+SC:wght@400;500;700;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; }
+:root {
+  --shell: #f3f2ee; --surface: #fafaf8; --surface-2: #fff; --text: #1c1917;
+  --text-2: #44403c; --text-mute: #57534e; --text-faint: #a8a29e; --rule: #e3e0d8;
+  --accent: #b45309; --accent-soft: rgba(180,83,9,.10);
+  --easy-bg: #ecfdf5; --easy: #059669; --mid-bg: #fff7ed; --mid: #c2410c;
+  --font-cn: "Noto Sans SC", sans-serif; --font-en: "Chakra Petch", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+}
+body { font-family: var(--font-cn); background: var(--shell); color: var(--text); }
+.app { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; }
+.fitter { position: relative; }
+.stage {
+  position: absolute; top: 0; left: 0; width: 1920px; height: 1080px;
+  transform-origin: top left; background: var(--surface); overflow: hidden;
+  box-shadow: 0 40px 100px rgba(28,25,23,.10);
+}
+.stage::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 1;
+  background-image:
+    linear-gradient(var(--accent) 1px, transparent 1px),
+    linear-gradient(90deg, var(--accent) 1px, transparent 1px);
+  background-size: 60px 60px; opacity: .04;
+}
+.style { position: absolute; inset: 0; z-index: 2; display: none; padding: 64px 80px 72px; }
+.style.active { display: flex; flex-direction: column; }
+.badge {
+  display: inline-flex; align-items: center; height: 28px; padding: 0 12px;
+  border-radius: 999px; font-size: 14px; font-weight: 700; letter-spacing: .02em;
+}
+.badge-easy { background: var(--easy-bg); color: var(--easy); }
+.badge-mid  { background: var(--mid-bg);  color: var(--mid); }
+
+/* HUD */
+.hud {
+  position: fixed; top: 16px; left: 50%; transform: translateX(-50%); z-index: 50;
+  display: flex; gap: 10px; padding: 8px; background: rgba(255,255,255,.92);
+  border: 1px solid var(--rule); border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(28,25,23,.08);
+}
+.hud button {
+  border: 1px solid var(--rule); background: #fff; color: var(--text-2);
+  font-family: var(--font-cn); font-size: 14px; font-weight: 700;
+  padding: 10px 16px; border-radius: 8px; cursor: pointer;
+}
+.hud button.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+.hint {
+  position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%); z-index: 50;
+  font-family: var(--font-mono); font-size: 12px; color: var(--text-faint); letter-spacing: .08em;
+}
+
+/* ═══ A 官网还原 · 分类卡片网格 ═══ */
+.a-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 36px; }
+.a-title { font-size: 56px; font-weight: 900; letter-spacing: -.02em; }
+.a-title .accent { color: var(--accent); }
+.a-sub { font-size: 20px; color: var(--text-mute); }
+.a-body { display: flex; flex-direction: column; gap: 28px; flex: 1; }
+.a-sec-title { font-size: 28px; font-weight: 800; }
+.a-sec-meta { font-size: 16px; color: var(--text-faint); margin: 6px 0 14px; }
+.a-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.a-grid-2 { grid-template-columns: repeat(4, 1fr); }
+.a-card {
+  background: #fff; border: 1px solid var(--rule); border-radius: 12px;
+  padding: 20px 22px 18px; min-height: 132px;
+  display: flex; flex-direction: column; gap: 10px;
+  box-shadow: 0 1px 0 var(--rule), 0 8px 20px rgba(28,25,23,.04);
+}
+.a-card .num { font-family: var(--font-mono); font-size: 14px; color: var(--text-faint); }
+.a-card .name { font-size: 22px; font-weight: 700; line-height: 1.35; flex: 1; }
+.a-card.span2 { grid-column: span 1; }
+.a-note { margin-top: auto; font-size: 16px; color: var(--text-faint); }
+
+/* ═══ B 学习路径 · 左脊右题 ═══ */
+.b-head { margin-bottom: 28px; }
+.b-kicker { font-family: var(--font-mono); font-size: 13px; letter-spacing: .18em; color: var(--text-faint); text-transform: uppercase; margin-bottom: 10px; }
+.b-title { font-size: 52px; font-weight: 900; }
+.b-title .accent { color: var(--accent); }
+.b-layout { display: grid; grid-template-columns: 340px 1fr; gap: 48px; flex: 1; min-height: 0; }
+.b-spine {
+  position: relative; display: flex; flex-direction: column; justify-content: space-between;
+  padding: 12px 0 12px 8px;
+}
+.b-spine::before {
+  content: ""; position: absolute; left: 27px; top: 36px; bottom: 36px; width: 2px;
+  background: linear-gradient(180deg, var(--accent), rgba(180,83,9,.25));
+}
+.b-node { position: relative; display: flex; gap: 18px; align-items: flex-start; }
+.b-dot {
+  width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0; z-index: 1;
+  background: var(--accent); color: #fff; font-family: var(--font-mono); font-weight: 600;
+  font-size: 14px; display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 0 0 6px var(--accent-soft);
+}
+.b-node-title { font-size: 24px; font-weight: 800; margin-bottom: 4px; }
+.b-node-meta { font-size: 15px; color: var(--text-mute); }
+.b-panels { display: flex; flex-direction: column; gap: 18px; }
+.b-panel {
+  background: #fff; border: 1px solid var(--rule); border-radius: 14px; padding: 18px 20px;
+  box-shadow: 0 8px 24px rgba(28,25,23,.04);
+}
+.b-panel-h { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.b-panel-h h3 { font-size: 20px; font-weight: 800; }
+.b-panel-h span { font-family: var(--font-mono); font-size: 13px; color: var(--text-faint); }
+.b-rows { display: flex; flex-wrap: wrap; gap: 10px; }
+.b-row {
+  display: flex; align-items: center; gap: 12px;
+  background: var(--shell); border-radius: 10px; padding: 12px 14px; min-width: 280px; flex: 1;
+}
+.b-row .n { font-family: var(--font-mono); font-size: 13px; color: var(--text-faint); width: 28px; }
+.b-row .t { font-size: 17px; font-weight: 700; flex: 1; line-height: 1.3; }
+
+/* ═══ C 课表看板 · 三列清单 ═══ */
+.c-head { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 32px; }
+.c-title { font-size: 48px; font-weight: 900; }
+.c-title .accent { color: var(--accent); font-family: var(--font-en); }
+.c-stat {
+  display: flex; gap: 28px; font-family: var(--font-mono); font-size: 15px; color: var(--text-mute);
+}
+.c-stat b { color: var(--text); font-size: 22px; display: block; margin-bottom: 2px; }
+.c-cols { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; flex: 1; }
+.c-col {
+  background: #fff; border: 1px solid var(--rule); border-radius: 16px; padding: 22px 20px;
+  display: flex; flex-direction: column; box-shadow: 0 8px 24px rgba(28,25,23,.04);
+}
+.c-col-top { border-bottom: 1px solid var(--rule); padding-bottom: 16px; margin-bottom: 8px; }
+.c-col-idx { font-family: var(--font-mono); font-size: 12px; letter-spacing: .16em; color: var(--accent); margin-bottom: 8px; }
+.c-col h3 { font-size: 26px; font-weight: 900; margin-bottom: 6px; }
+.c-col .meta { font-size: 15px; color: var(--text-faint); }
+.c-list { display: flex; flex-direction: column; gap: 4px; margin-top: 8px; }
+.c-item {
+  display: grid; grid-template-columns: 40px 1fr auto; gap: 10px; align-items: center;
+  padding: 14px 8px; border-bottom: 1px dashed var(--rule);
+}
+.c-item:last-child { border-bottom: 0; }
+.c-item .n { font-family: var(--font-mono); font-size: 14px; color: var(--text-faint); }
+.c-item .t { font-size: 18px; font-weight: 700; line-height: 1.35; }
+.tag {
+  align-self: flex-start; margin-top: 18px; font-size: 13px; font-weight: 700;
+  color: var(--accent); background: var(--accent-soft); padding: 6px 10px; border-radius: 6px;
+}
+</style>
+</head>
+<body>
+<div class="hud">
+  <button data-s="0" class="active">A 官网还原</button>
+  <button data-s="1">B 学习路径</button>
+  <button data-s="2">C 课表看板</button>
+</div>
+<p class="hint">按 1 / 2 / 3 切换风格 · 选定后告诉我接入 PPT</p>
+
+<div class="app"><div class="fitter"><div class="stage" id="stage">
+
+  <!-- A -->
+  <section class="style active" data-style="0">
+    <div class="a-head">
+      <h1 class="a-title">题库列表 · <span class="accent">ACM 输入输出</span></h1>
+      <p class="a-sub">按数据结构分类 · 从易到难</p>
+    </div>
+    <div class="a-body">
+      <div>
+        <div class="a-sec-title">数组的输入输出</div>
+        <div class="a-sec-meta">共 4 节</div>
+        <div class="a-grid">
+          <div class="a-card"><div class="num">#1</div><div class="name">A+B Problem（入门版）</div><span class="badge badge-easy">简单</span></div>
+          <div class="a-card"><div class="num">#2</div><div class="name">A+B Problem（长整型版）</div><span class="badge badge-easy">简单</span></div>
+          <div class="a-card"><div class="num">#3</div><div class="name">A+B+C… Problem（单行输入）</div><span class="badge badge-easy">简单</span></div>
+          <div class="a-card"><div class="num">#4</div><div class="name">A+B+C… Problem（多行输入）</div><span class="badge badge-easy">简单</span></div>
+        </div>
+      </div>
+      <div>
+        <div class="a-sec-title">链表的输入输出</div>
+        <div class="a-sec-meta">共 1 节</div>
+        <div class="a-grid a-grid-2">
+          <div class="a-card"><div class="num">#5</div><div class="name">构建链表并输出</div><span class="badge badge-mid">中等</span></div>
+        </div>
+      </div>
+      <div>
+        <div class="a-sec-title">二叉树的输入输出</div>
+        <div class="a-sec-meta">共 2 节</div>
+        <div class="a-grid a-grid-2">
+          <div class="a-card"><div class="num">#6</div><div class="name">完全二叉树的读入与构建</div><span class="badge badge-mid">中等</span></div>
+          <div class="a-card"><div class="num">#7</div><div class="name">普通二叉树的读入与构建</div><span class="badge badge-mid">中等</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- B -->
+  <section class="style" data-style="1">
+    <div class="b-head">
+      <div class="b-kicker">Learning Path</div>
+      <h1 class="b-title">一条路径吃透 <span class="accent">ACM 读入输出</span></h1>
+    </div>
+    <div class="b-layout">
+      <aside class="b-spine">
+        <div class="b-node"><div class="b-dot">01</div><div><div class="b-node-title">数组</div><div class="b-node-meta">4 题 · 打底读入</div></div></div>
+        <div class="b-node"><div class="b-dot">02</div><div><div class="b-node-title">链表</div><div class="b-node-meta">1 题 · 结构构建</div></div></div>
+        <div class="b-node"><div class="b-dot">03</div><div><div class="b-node-title">二叉树</div><div class="b-node-meta">2 题 · 树的读入</div></div></div>
+      </aside>
+      <div class="b-panels">
+        <div class="b-panel">
+          <div class="b-panel-h"><h3>数组的输入输出</h3><span>01 — 04</span></div>
+          <div class="b-rows">
+            <div class="b-row"><span class="n">#1</span><span class="t">A+B Problem（入门版）</span><span class="badge badge-easy">简单</span></div>
+            <div class="b-row"><span class="n">#2</span><span class="t">A+B Problem（长整型版）</span><span class="badge badge-easy">简单</span></div>
+            <div class="b-row"><span class="n">#3</span><span class="t">A+B+C…（单行输入）</span><span class="badge badge-easy">简单</span></div>
+            <div class="b-row"><span class="n">#4</span><span class="t">A+B+C…（多行输入）</span><span class="badge badge-easy">简单</span></div>
+          </div>
+        </div>
+        <div class="b-panel">
+          <div class="b-panel-h"><h3>链表的输入输出</h3><span>05</span></div>
+          <div class="b-rows">
+            <div class="b-row"><span class="n">#5</span><span class="t">构建链表并输出</span><span class="badge badge-mid">中等</span></div>
+          </div>
+        </div>
+        <div class="b-panel">
+          <div class="b-panel-h"><h3>二叉树的输入输出</h3><span>06 — 07</span></div>
+          <div class="b-rows">
+            <div class="b-row"><span class="n">#6</span><span class="t">完全二叉树的读入与构建</span><span class="badge badge-mid">中等</span></div>
+            <div class="b-row"><span class="n">#7</span><span class="t">普通二叉树的读入与构建</span><span class="badge badge-mid">中等</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- C -->
+  <section class="style" data-style="2">
+    <div class="c-head">
+      <h1 class="c-title">课表看板 · <span class="accent">7</span> 题打通输入输出</h1>
+      <div class="c-stat">
+        <div><b>3</b>分类</div>
+        <div><b>4</b>简单</div>
+        <div><b>3</b>中等</div>
+      </div>
+    </div>
+    <div class="c-cols">
+      <div class="c-col">
+        <div class="c-col-top">
+          <div class="c-col-idx">CHAPTER 01</div>
+          <h3>数组</h3>
+          <div class="meta">输入输出基础 · 共 4 节</div>
+        </div>
+        <div class="c-list">
+          <div class="c-item"><span class="n">#1</span><span class="t">A+B Problem（入门版）</span><span class="badge badge-easy">简单</span></div>
+          <div class="c-item"><span class="n">#2</span><span class="t">A+B Problem（长整型版）</span><span class="badge badge-easy">简单</span></div>
+          <div class="c-item"><span class="n">#3</span><span class="t">A+B+C…（单行输入）</span><span class="badge badge-easy">简单</span></div>
+          <div class="c-item"><span class="n">#4</span><span class="t">A+B+C…（多行输入）</span><span class="badge badge-easy">简单</span></div>
+        </div>
+        <span class="tag">打底</span>
+      </div>
+      <div class="c-col">
+        <div class="c-col-top">
+          <div class="c-col-idx">CHAPTER 02</div>
+          <h3>链表</h3>
+          <div class="meta">结构构建 · 共 1 节</div>
+        </div>
+        <div class="c-list">
+          <div class="c-item"><span class="n">#5</span><span class="t">构建链表并输出</span><span class="badge badge-mid">中等</span></div>
+        </div>
+        <span class="tag">过渡</span>
+      </div>
+      <div class="c-col">
+        <div class="c-col-top">
+          <div class="c-col-idx">CHAPTER 03</div>
+          <h3>二叉树</h3>
+          <div class="meta">树的读入 · 共 2 节</div>
+        </div>
+        <div class="c-list">
+          <div class="c-item"><span class="n">#6</span><span class="t">完全二叉树的读入与构建</span><span class="badge badge-mid">中等</span></div>
+          <div class="c-item"><span class="n">#7</span><span class="t">普通二叉树的读入与构建</span><span class="badge badge-mid">中等</span></div>
+        </div>
+        <span class="tag">进阶</span>
+      </div>
+    </div>
+  </section>
+
+</div></div></div>
+
+<script>
+(function () {
+  var styles = document.querySelectorAll('.style');
+  var buttons = document.querySelectorAll('.hud button');
+  var stage = document.getElementById('stage');
+  var fitter = document.querySelector('.fitter');
+  var cur = 0;
+  function show(i) {
+    cur = i;
+    styles.forEach(function (s, idx) { s.classList.toggle('active', idx === i); });
+    buttons.forEach(function (b, idx) { b.classList.toggle('active', idx === i); });
+  }
+  function scale() {
+    var s = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+    stage.style.transform = 'scale(' + s + ')';
+    fitter.style.width = (1920 * s) + 'px';
+    fitter.style.height = (1080 * s) + 'px';
+  }
+  buttons.forEach(function (b) {
+    b.addEventListener('click', function () { show(+b.dataset.s); });
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === '1') show(0);
+    if (e.key === '2') show(1);
+    if (e.key === '3') show(2);
+  });
+  window.addEventListener('resize', scale);
+  scale(); show(0);
+})();
+</script>
+</body>
+</html>
